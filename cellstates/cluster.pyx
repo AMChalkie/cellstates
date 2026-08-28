@@ -344,7 +344,7 @@ def merge_clusters_hierarchical(Cluster clst,
 
     # 2D array  that  contains  change  in  log-likelihood
     # for  the  merge of any of two clusters
-    cdef np.ndarray[np.float_t, ndim = 2] delta_LL
+    cdef np.ndarray[np.float64_t, ndim = 2] delta_LL
     delta_LL = np.zeros((clst.N_boxes, clst.N_boxes), dtype=np.float64)
 
     for i in range(clst.N_boxes):
@@ -362,7 +362,8 @@ def merge_clusters_hierarchical(Cluster clst,
             delta_LL[j, i] = delta
 
     # array of cluster label
-    cdef np.ndarray[np.int_t, ndim = 1] clusters = np.arange(clst.N_boxes)
+    cdef np.ndarray[np.int64_t, ndim = 1] clusters = \
+        np.arange(clst.N_boxes, dtype=np.int64)
 
     delta_LL_history = []
     merge_hierarchy = []
@@ -402,7 +403,7 @@ def merge_clusters_optimally(Cluster clst):
     cdef:
         int a_max, c1, c2
         list cluster_hierarchy, delta_LL_history
-        np.ndarray[np.float_t, ndim = 1] total_delta
+        np.ndarray[np.float64_t, ndim = 1] total_delta
     cluster_hierarchy, delta_LL_history = clst.get_cluster_hierarchy()
 
     # find maximum in total LL change after each merge
@@ -427,11 +428,11 @@ def optimize_cell_positions_full(Cluster clst):
 
     cdef:
         int cell, c_best, move_count = 0
-        np.ndarray[np.int_t, ndim = 1] cell_iter
-        np.ndarray[np.float_t, ndim = 1] best_delta_LL
+        np.ndarray[np.int64_t, ndim = 1] cell_iter
+        np.ndarray[np.float64_t, ndim = 1] best_delta_LL
         double delta
 
-    cell_iter = np.random.permutation(clst.N_samples)
+    cell_iter = np.random.permutation(clst.N_samples).astype(np.int64, copy=False)
     best_delta_LL = np.zeros(clst.N_samples, dtype=np.float64)
     while True:
         PyErr_CheckSignals()
@@ -454,7 +455,8 @@ def optimize_cell_positions_full(Cluster clst):
             move_count = 0
             # only 20% of cells are considered in next round, the assumption
             # being that most cells are already well placed
-            cell_iter = np.argsort(-best_delta_LL)[:clst.N_samples//5]
+            cell_iter = np.argsort(-best_delta_LL)[:clst.N_samples//5] \
+                .astype(np.int64, copy=False)
 
 
 
@@ -535,8 +537,8 @@ cdef class Cluster:
                 l = l[mask]
                 d = d[mask, :]
 
-        self.LAMBDA = <np.ndarray[np.float_t, ndim = 1]> l
-        self.data = <np.ndarray[np.int_t, ndim = 2]?> d
+        self.LAMBDA = <np.ndarray[np.float64_t, ndim = 1]> l
+        self.data = <np.ndarray[np.int64_t, ndim = 2]?> d
         self.G = d.shape[0]
         self.N_samples = d.shape[1]
 
@@ -705,7 +707,7 @@ cdef class Cluster:
         cdef:
             np.ndarray[np.int32_t, ndim = 1] \
                 new_clusters = np.zeros(self.N_samples, dtype=np.int32)
-            np.ndarray[np.float_t, ndim = 1] \
+            np.ndarray[np.float64_t, ndim = 1] \
                 new_likelihood = np.zeros(Nb_new, dtype=np.float64)
 
         for i in range(self.n_clusters):
@@ -752,7 +754,7 @@ cdef class Cluster:
             self.LAMBDA_sum = l
             l = self.LAMBDA_sum*np.sum(self.umi_data, axis=1)/np.sum(self.umi_data)
 
-        self.LAMBDA = <np.ndarray[np.float_t, ndim = 1]> l
+        self.LAMBDA = <np.ndarray[np.float64_t, ndim = 1]> l
         self.B = find_dirichlet_norm(self.LAMBDA, self.num_threads)
         if n_cache > 0:
             self.n_cache = n_cache
@@ -1018,7 +1020,7 @@ cdef class Cluster:
             When c is an empty cluster
         """
         cdef:
-            np.ndarray[np.float_t, ndim = 1] f
+            np.ndarray[np.float64_t, ndim = 1] f
         if self._cluster_sizes[c] == 0:
             raise ValueError(f'{c} is an empty cluster')
         else:
@@ -1053,9 +1055,9 @@ cdef class Cluster:
         """
 
         cdef:
-            np.ndarray[np.float_t, ndim = 1] f
-            np.ndarray[np.float_t, ndim = 1] var_f
-            np.ndarray[np.float_t, ndim = 1] n_gc
+            np.ndarray[np.float64_t, ndim = 1] f
+            np.ndarray[np.float64_t, ndim = 1] var_f
+            np.ndarray[np.float64_t, ndim = 1] n_gc
             double n_c
         if self._cluster_sizes[c] == 0:
             raise ValueError(f'{c} is an empty cluster')

@@ -9,7 +9,7 @@ from .cluster cimport Cluster, find_cluster_distance
 from scipy.special.cython_special cimport betainc, logit
 
 
-cpdef np.ndarray[np.float_t, ndim = 1] get_cluster_distances(Cluster clst):
+cpdef np.ndarray[np.float64_t, ndim = 1] get_cluster_distances(Cluster clst):
     """
     returns condensed matrix X of log-likelihood changes when pairs
     of clusters are merged. -X gives the distance in the traditional sense
@@ -28,7 +28,7 @@ cpdef np.ndarray[np.float_t, ndim = 1] get_cluster_distances(Cluster clst):
         double distance
         int Nb = clst.N_boxes
         int idx = 0
-        np.ndarray[np.float_t, ndim = 1] X = np.zeros(Nb*(Nb-1)//2,
+        np.ndarray[np.float64_t, ndim = 1] X = np.zeros(Nb*(Nb-1)//2,
                                                       dtype=np.float64)
     for i in range(Nb):
         for j in range(i+1, Nb):
@@ -42,7 +42,7 @@ cpdef np.ndarray[np.float_t, ndim = 1] get_cluster_distances(Cluster clst):
 
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-cpdef np.ndarray[np.float_t, ndim = 1] marker_scores(Cluster clst, list C1, list C2):
+cpdef np.ndarray[np.float64_t, ndim = 1] marker_scores(Cluster clst, list C1, list C2):
     """
     Marker gene scores that predict how well a gene can separate the two groups of cellstates
     C1 and C2. The score is positive if the gene expression is higher in C2 than C1 and negative
