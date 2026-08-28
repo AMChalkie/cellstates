@@ -85,7 +85,7 @@ def main():
             filetype=datafile.split('.')[-1]
             filename=datafile.split('.')[:-1]
             if filetype in ['txt', 'tsv', 'zip', 'gz', 'bz2', 'xz', 'csv']:
-                df = pd.read_csv(datafile, delim_whitespace=True, header=0, index_col=0)
+                df = pd.read_csv(datafile, sep=r'\s+', header=0, index_col=0)
                 if df.shape[1]==1:
                     # if above fails, use slower method and infer delimiter
                     df = pd.read_csv(datafile, sep=None, header=0, index_col=0,
