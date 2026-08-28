@@ -22,8 +22,7 @@ Finally, install with
 A C-compiler with OpenMP is required for installation. See below for possible solutions with MacOS. 
 
 **Python packages**
-* Mandatory: numpy, pandas, matplotlib, scipy
-* Strongly recommended: Cython
+* Mandatory: numpy, pandas, matplotlib, scipy, Cython
 * Recommended for plotting of hierarchies: [ete3](http://etetoolkit.org/)
 
 ### MacOS

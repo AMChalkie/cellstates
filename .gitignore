@@ -1,0 +1,13 @@
+# Cython-generated C sources (regenerated from .pyx at build time)
+cellstates/cluster.c
+cellstates/chelpers.c
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.so
+
+# Python bytecode
+__pycache__/
+*.py[cod]

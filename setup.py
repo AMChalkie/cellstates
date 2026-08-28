@@ -12,22 +12,22 @@ EMAIL = 'pascal.grobecker@unibas.ch'
 PACKAGES = ['cellstates']
 
 
-USE_CYTHON = True
 try:
     from Cython.Build import cythonize
-except ModuleNotFoundError:
-    USE_CYTHON = False
-
-ext = '.pyx' if USE_CYTHON else '.c'
+except ModuleNotFoundError as exc:
+    raise ModuleNotFoundError(
+        "Cython is required to build cellstates. Install it with "
+        "`pip install Cython` (or `conda install cython`) and try again."
+    ) from exc
 
 EXTENSIONS = [Extension("cellstates.cluster",
-                        ["cellstates/cluster" + ext],
+                        ["cellstates/cluster.pyx"],
                         include_dirs=[numpy.get_include(), '.'],
                         extra_compile_args=['-fopenmp'],
                         extra_link_args=['-fopenmp'],
                         define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
               Extension("cellstates.chelpers",
-                        ["cellstates/chelpers" + ext],
+                        ["cellstates/chelpers.pyx"],
                         include_dirs=[numpy.get_include(), '.'],
                         extra_compile_args=['-fopenmp'],
                         extra_link_args=['-fopenmp'],
@@ -35,9 +35,8 @@ EXTENSIONS = [Extension("cellstates.cluster",
                         )
               ]
 
-if USE_CYTHON:
-    EXTENSIONS = cythonize(EXTENSIONS,
-                           compiler_directives={'language_level': 3})
+EXTENSIONS = cythonize(EXTENSIONS,
+                       compiler_directives={'language_level': 3})
 
 if __name__ == '__main__':
     setup(
